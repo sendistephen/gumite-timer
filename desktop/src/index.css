@@ -1,0 +1,233 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Outfit', system-ui, sans-serif;
+
+  /* Theme tokens — values come from the :root / [data-theme] blocks below. */
+  --color-card: var(--t-card);
+  --color-glass: var(--t-glass);
+  --color-glass-hover: var(--t-glass-hover);
+  --color-glass-line: var(--t-line);
+  --color-digit: var(--t-digit);
+  --color-muted: var(--t-muted);
+  --color-faint: var(--t-faint);
+  --color-ink: var(--t-ink);
+  --color-solid: var(--t-solid);
+  --color-on-solid: var(--t-on-solid);
+  --color-track: var(--t-track);
+  --color-accent: var(--accent, #f5b83d);
+  --color-on-accent: #111114;
+
+  --animate-slide-up: slide-up 360ms cubic-bezier(0.2, 0.8, 0.3, 1);
+  --animate-pulse-dot: pulse-dot 1s ease-in-out infinite;
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(40px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.25;
+    }
+  }
+}
+
+/* Dark glass (default) */
+:root {
+  --base: 22 22 28;
+  --tint-a: 0.26;
+  --t-card: rgb(255 255 255 / 0.08);
+  --t-glass: rgb(255 255 255 / 0.1);
+  --t-glass-hover: rgb(255 255 255 / 0.16);
+  --t-line: rgb(255 255 255 / 0.14);
+  --t-digit: #f2f2f4;
+  --t-muted: rgb(255 255 255 / 0.64);
+  --t-faint: rgb(255 255 255 / 0.5);
+  --t-ink: #f4f4f6;
+  --t-solid: rgb(255 255 255 / 0.92);
+  --t-on-solid: #111114;
+  --t-track: rgb(255 255 255 / 0.14);
+  --sheen-a: 0.1;
+  --flap: rgb(255 255 255 / 0.13);
+  --hinge-dark: rgb(0 0 0 / 0.38);
+}
+/* Light glass */
+[data-theme='light'] {
+  --base: 248 248 251;
+  --tint-a: 0.4;
+  --t-card: rgb(255 255 255 / 0.5);
+  --t-glass: rgb(255 255 255 / 0.45);
+  --t-glass-hover: rgb(255 255 255 / 0.7);
+  --t-line: rgb(0 0 0 / 0.1);
+  --t-digit: #1c1c22;
+  --t-muted: rgb(0 0 0 / 0.6);
+  --t-faint: rgb(0 0 0 / 0.5);
+  --t-ink: #16161a;
+  --t-solid: #1c1c22;
+  --t-on-solid: #ffffff;
+  --t-track: rgb(0 0 0 / 0.12);
+  --sheen-a: 0.35;
+  --flap: rgb(255 255 255 / 0.55);
+  --hinge-dark: rgb(0 0 0 / 0.18);
+}
+/* How much of the desktop shows through */
+[data-tint='clear'] {
+  --tint-a: 0.1;
+}
+[data-tint='solid'] {
+  --tint-a: 0.7;
+}
+[data-theme='light'][data-tint='clear'] {
+  --tint-a: 0.2;
+}
+[data-theme='light'][data-tint='solid'] {
+  --tint-a: 0.8;
+}
+
+/* The window itself is transparent; the widget draws its own glass. */
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+}
+
+/* ---------- glass surface ----------
+   data-glass on <html>:
+   vibrancy → macOS blurs the desktop natively; we add a light tint + sheen.
+   acrylic  → Windows blurs natively and rounds the corners (8px).
+   none     → no native blur (Windows 10 without acrylic, or a browser):
+              a darker, mostly-opaque frosted panel so text stays readable. */
+.glass {
+  position: relative;
+  border: 1px solid var(--color-glass-line);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    inset 0 -1px 0 rgb(0 0 0 / 0.18);
+  background:
+    linear-gradient(160deg, rgb(255 255 255 / var(--sheen-a)) 0%, rgb(255 255 255 / 0.02) 38%, rgb(0 0 0 / 0.08) 100%),
+    rgb(var(--base) / var(--tint-a));
+}
+[data-glass='acrylic'] .glass {
+  border-color: transparent;
+  background:
+    linear-gradient(160deg, rgb(255 255 255 / calc(var(--sheen-a) * 0.8)) 0%, rgb(255 255 255 / 0.01) 40%),
+    rgb(var(--base) / calc(var(--tint-a) * 0.7));
+}
+/* No native blur: stay mostly opaque so text is always readable. */
+[data-glass='none'] .glass {
+  background:
+    linear-gradient(160deg, rgb(255 255 255 / var(--sheen-a)) 0%, rgb(255 255 255 / 0.03) 38%, rgb(0 0 0 / 0.1) 100%),
+    rgb(var(--base) / max(0.9, var(--tint-a)));
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  backdrop-filter: blur(24px) saturate(1.4);
+}
+.glass-ring {
+  box-shadow:
+    inset 0 0 0 2px var(--color-accent),
+    inset 0 1px 0 rgb(255 255 255 / 0.18);
+}
+
+/* Frosted flip cards inside the panel. */
+.glass-card {
+  border: 1px solid var(--t-line);
+  background: linear-gradient(180deg, var(--t-card), color-mix(in srgb, var(--t-card) 60%, transparent));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    0 6px 18px rgb(0 0 0 / 0.18);
+}
+.hinge {
+  height: 2px;
+  background: linear-gradient(180deg, var(--hinge-dark) 0 50%, rgb(255 255 255 / 0.07) 50% 100%);
+}
+
+/* ---------- split-flap digit ---------- */
+.flip {
+  position: relative;
+  perspective: calc(var(--h) * 3);
+  width: var(--w);
+  height: var(--h);
+}
+.flip .half {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+.flip .half.top {
+  top: 0;
+}
+.flip .half.bottom {
+  top: 50%;
+}
+.flip .half > span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: var(--h);
+  line-height: var(--h);
+  text-align: center;
+  font-size: calc(var(--h) * 0.9);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
+}
+.flip .half.bottom > span {
+  top: -100%;
+}
+/* Flaps only exist mid-flip. Frosted glass: the blur smudges the digit
+   underneath so only the flap's own digit reads clearly. */
+.flip .flap {
+  background: var(--flap);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+}
+.flip .flap-top {
+  border-radius: 6px 6px 0 0;
+  transform-origin: bottom;
+  animation: fold-top 160ms ease-in forwards;
+}
+.flip .flap-bottom {
+  border-radius: 0 0 6px 6px;
+  transform-origin: top;
+  transform: rotateX(90deg);
+  animation: land-bottom 230ms 160ms cubic-bezier(0.3, 1.4, 0.6, 1) forwards;
+}
+@keyframes fold-top {
+  to {
+    transform: rotateX(-90deg);
+  }
+}
+@keyframes land-bottom {
+  from {
+    transform: rotateX(90deg);
+  }
+  to {
+    transform: rotateX(0deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flip .flap-top,
+  .flip .flap-bottom {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+  }
+}

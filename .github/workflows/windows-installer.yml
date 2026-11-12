@@ -1,0 +1,35 @@
+# Builds just the Windows installer for the Flip Timer widget.
+# Run it from GitHub → Actions → "Windows installer" → Run workflow.
+# When it finishes, download "Flip-Timer-Windows" from the run's Artifacts section:
+# it contains Flip Timer_<version>_x64-setup.exe — copy that to the PC and double-click.
+name: Windows installer
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: desktop/src-tauri -> target
+      - run: npm ci
+      - run: npm run tauri build -- --bundles nsis
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Flip-Timer-Windows
+          path: desktop/src-tauri/target/release/bundle/nsis/*-setup.exe
+          if-no-files-found: error

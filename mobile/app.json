@@ -1,0 +1,51 @@
+{
+  "expo": {
+    "name": "Gumite Flip Timer",
+    "slug": "gumite-flip-timer",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#000000",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.genesis.gumitetimer"
+    },
+    "android": {
+      "package": "com.genesis.gumitetimer",
+      "adaptiveIcon": {
+        "backgroundColor": "#000000",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "VIBRATE",
+        "SCHEDULE_EXACT_ALARM"
+      ],
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-audio",
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "color": "#F5B83D",
+          "sounds": [
+            "./assets/sounds/alarm-chime.wav",
+            "./assets/sounds/alarm-marimba.wav",
+            "./assets/sounds/alarm-classic.wav",
+            "./assets/sounds/alarm-digital.wav",
+            "./assets/sounds/alarm-arcade.wav",
+            "./assets/sounds/alarm-bowl.wav"
+          ]
+        }
+      ]
+    ]
+  }
+}

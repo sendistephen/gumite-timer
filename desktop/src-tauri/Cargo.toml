@@ -1,0 +1,35 @@
+[package]
+name = "gumite-flip-widget"
+version = "0.2.0"
+description = "Bottom-docked flip-clock timer widget for Windows and macOS"
+authors = ["Genesis"]
+edition = "2021"
+
+[lib]
+name = "gumite_flip_widget_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon", "image-png", "macos-private-api"] }
+tauri-plugin-notification = "2"
+serde = { version = "1", features = ["derive"] }
+# Native glass: vibrancy on macOS, acrylic on Windows (no-ops elsewhere).
+window-vibrancy = "0.6"
+tauri-plugin-global-shortcut = "2"
+tauri-plugin-autostart = "2"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+tauri-nspanel = "2.1"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.59", features = ["Win32_Foundation", "Win32_UI_Input_KeyboardAndMouse", "Win32_System_SystemInformation"] }
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true
